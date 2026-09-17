@@ -4,7 +4,7 @@ const { existsSync, promises: fs } = require('node:fs');
 const path = require('node:path');
 const { pathToFileURL } = require('node:url');
 const { ffmpegArgs } = require('./ffmpeg');
-const { planImageRenames, isSameWindowsPath, oldNameFor } = require('./renames');
+const { planImageRenames, isSameWindowsPath, oldNameFor, oldNameConflicts } = require('./renames');
 
 const isM4a = (file) => path.extname(file).toLowerCase() === '.m4a';
 const isPng = (file) => path.extname(file).toLowerCase() === '.png';
@@ -81,6 +81,10 @@ app.whenReady().then(() => {
     }
     await fs.mkdir(outputDirectory, { recursive: true });
     const renamePlan = planImageRenames(matches);
+    const conflicts = oldNameConflicts(renamePlan);
+    if (conflicts.length) {
+      throw new Error(`Eksport afbrudt før nogen filer skrives. Følgende .old-filer må ikke allerede findes:\n${conflicts.join('\n')}`);
+    }
     const planBySource = new Map(renamePlan.map((plan) => [plan.source, plan]));
     const results = [];
     for (let index = 0; index < matches.length; index += 1) {
