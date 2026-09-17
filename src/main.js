@@ -4,6 +4,7 @@ const { existsSync, promises: fs } = require('node:fs');
 const path = require('node:path');
 const { pathToFileURL } = require('node:url');
 const { ffmpegArgs } = require('./ffmpeg');
+const { planImageRenames } = require('./renames');
 
 const isM4a = (file) => path.extname(file).toLowerCase() === '.m4a';
 const isPng = (file) => path.extname(file).toLowerCase() === '.png';
@@ -79,6 +80,11 @@ app.whenReady().then(() => {
       throw new Error('Vælg mindst én parring og en outputmappe.');
     }
     await fs.mkdir(outputDirectory, { recursive: true });
+    const renamePlan = planImageRenames(matches);
+    if (renamePlan.errors.length) {
+      throw new Error(`Eksport stoppet, fordi PNG-filer ikke kan omdøbes sikkert:\n${renamePlan.errors.join('\n')}`);
+    }
+    const planBySource = new Map(renamePlan.plans.map((plan) => [plan.source, plan]));
     const results = [];
     for (let index = 0; index < matches.length; index += 1) {
       const match = matches[index];
@@ -86,7 +92,15 @@ app.whenReady().then(() => {
       event.sender.send('export-progress', { current: index + 1, total: matches.length, song: match.song.name });
       try {
         await runFfmpeg(match.song.path, match.image.path, output);
-        results.push({ song: match.song.name, cover: match.image.name, output: path.basename(output), status: 'ok' });
+        const rename = planBySource.get(match.image.path);
+        await fs.rename(rename.source, rename.target);
+        results.push({
+          song: match.song.name,
+          cover: match.image.name,
+          renamedCover: path.basename(rename.target),
+          output: path.basename(output),
+          status: 'ok'
+        });
       } catch (error) {
         results.push({ song: match.song.name, cover: match.image.name, output: path.basename(output), status: 'error', error: error.message });
       }
