@@ -11,6 +11,8 @@ En lille Windows-app til at parre M4A-sange med PNG-covers, visuelt og manuelt.
 
 Appen kopierer lydstrømmen uden genkodning og indlejrer det valgte PNG-cover. Originalerne bliver ikke ændret. Den færdige fil får samme filnavn som den oprindelige M4A-fil, så parringen efterfølgende er entydig. En fil, der allerede findes i outputmappen, overskrives aldrig; den markeres som fejl i revisionslisten.
 
+Efter hver vellykket eksport omdøber appen det oprindelige anvendte PNG-cover i covermappen til sangens navn, fx `14.png` til `True True Love.png`. Der oprettes ingen PNG-kopier. Før eksport kontrollerer appen, at omdøbningen ikke vil overskrive et eksisterende PNG; hvis den ville, stoppes hele eksporten, så du kan rydde konflikten op først.
+
 En `cover-matches.json` gemmes i outputmappen som revisionsspor over alle valg.
 
 ## Byg til Windows 10
