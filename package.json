@@ -1,6 +1,6 @@
 {
   "name": "suno-cover-matcher",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Pair Suno M4A tracks with PNG covers and embed the cover art safely.",
   "main": "src/main.js",
   "scripts": {
