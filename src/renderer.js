@@ -68,7 +68,7 @@ $('export').addEventListener('click', async () => {
   try {
     const results = await window.coverMatcher.exportCovers({ matches, outputDirectory: state.outputDirectory });
     const failed = results.filter((item) => item.status === 'error');
-    setNotice(failed.length ? `${results.length - failed.length} færdige; ${failed.length} fejlede. Se cover-matches.json.` : `${results.length} færdige. cover-matches.json er gemt i outputmappen.`, failed.length > 0);
+    setNotice(failed.length ? `${results.length - failed.length} færdige; ${failed.length} fejlede. Se cover-matches.json.` : `${results.length} færdige; hvert brugt PNG er omdøbt til sangens navn. cover-matches.json er gemt i outputmappen.`, failed.length > 0);
   } catch (error) { setNotice(error.message, true); }
   render();
 });
