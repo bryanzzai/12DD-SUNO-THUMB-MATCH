@@ -15,13 +15,18 @@ function isSameWindowsPath(first, second) {
 }
 
 function oldNameFor(existingTarget, pathExists = existsSync) {
-  let candidate = `${existingTarget}.old`;
-  let sequence = 2;
-  while (pathExists(candidate)) {
-    candidate = `${existingTarget}.old-${sequence}`;
-    sequence += 1;
+  const candidate = `${existingTarget}.old`;
+  if (pathExists(candidate)) {
+    throw new Error(`Alvorlig navnekonflikt: ${path.basename(candidate)} findes allerede.`);
   }
   return candidate;
 }
 
-module.exports = { planImageRenames, isSameWindowsPath, oldNameFor };
+function oldNameConflicts(plans, pathExists = existsSync) {
+  return plans
+    .filter((plan) => !isSameWindowsPath(plan.source, plan.target))
+    .filter((plan) => pathExists(plan.target) && pathExists(`${plan.target}.old`))
+    .map((plan) => path.basename(`${plan.target}.old`));
+}
+
+module.exports = { planImageRenames, isSameWindowsPath, oldNameFor, oldNameConflicts };
