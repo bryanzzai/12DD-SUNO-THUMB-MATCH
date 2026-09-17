@@ -1,0 +1,39 @@
+{
+  "name": "suno-cover-matcher",
+  "version": "1.0.0",
+  "description": "Pair Suno M4A tracks with PNG covers and embed the cover art safely.",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/*.test.js",
+    "package:win": "electron-builder --win nsis"
+  },
+  "build": {
+    "appId": "dk.suno.covermatcher",
+    "productName": "Suno Cover Matcher",
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "node_modules/ffmpeg-static",
+        "to": "ffmpeg-static",
+        "filter": [
+          "ffmpeg.exe"
+        ]
+      }
+    ],
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "devDependencies": {
+    "electron": "^35.1.2",
+    "electron-builder": "^26.0.12"
+  },
+  "dependencies": {
+    "ffmpeg-static": "^5.2.0"
+  }
+}
