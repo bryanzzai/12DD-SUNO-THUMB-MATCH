@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="da">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Suno Cover Matcher</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header>
+      <div>
+        <h1>Suno Cover Matcher</h1>
+        <p>Par hver sang med det cover, der faktisk passer til den.</p>
+      </div>
+      <button id="clear" class="quiet">Ryd tildelinger</button>
+    </header>
+    <section class="controls" aria-label="Vælg filer">
+      <button id="songs-button">1. Vælg M4A-mappe</button>
+      <span id="songs-status">Ingen sange valgt</span>
+      <button id="images-button">2. Vælg PNG-mappe</button>
+      <span id="images-status">Ingen covers valgt</span>
+      <button id="output-button">3. Vælg outputmappe</button>
+      <span id="output-status">Originaler berøres ikke</span>
+    </section>
+    <main>
+      <section class="songs-panel">
+        <div class="panel-heading"><h2>Sange</h2><span id="match-count">0 / 0 parret</span></div>
+        <p class="hint">Træk et cover herhen — eller vælg et cover og klik på en række.</p>
+        <div id="songs" class="songs"></div>
+      </section>
+      <section class="images-panel">
+        <div class="panel-heading"><h2>Covers</h2><span id="image-count">0 tilgængelige</span></div>
+        <p class="hint">Klik for at vælge. Et allerede anvendt cover markeres.</p>
+        <div id="images" class="images"></div>
+      </section>
+    </main>
+    <footer>
+      <div id="notice" role="status">Vælg først dine M4A- og PNG-mapper.</div>
+      <button id="export" class="primary" disabled>Skriv covers</button>
+    </footer>
+    <script src="renderer.js"></script>
+  </body>
+</html>
