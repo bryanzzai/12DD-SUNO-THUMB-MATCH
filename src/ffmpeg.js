@@ -1,6 +1,6 @@
 function ffmpegArgs(input, cover, output) {
   return [
-    '-y', '-i', input, '-i', cover,
+    '-n', '-i', input, '-i', cover,
     '-map', '0:a:0', '-map', '1:v:0',
     '-c:a', 'copy', '-c:v', 'copy',
     '-disposition:v:0', 'attached_pic',
