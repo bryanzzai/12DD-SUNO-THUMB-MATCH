@@ -4,7 +4,7 @@ const { existsSync, promises: fs } = require('node:fs');
 const path = require('node:path');
 const { pathToFileURL } = require('node:url');
 const { ffmpegArgs } = require('./ffmpeg');
-const { planImageRenames } = require('./renames');
+const { planImageRenames, isSameWindowsPath, oldNameFor } = require('./renames');
 
 const isM4a = (file) => path.extname(file).toLowerCase() === '.m4a';
 const isPng = (file) => path.extname(file).toLowerCase() === '.png';
@@ -81,10 +81,7 @@ app.whenReady().then(() => {
     }
     await fs.mkdir(outputDirectory, { recursive: true });
     const renamePlan = planImageRenames(matches);
-    if (renamePlan.errors.length) {
-      throw new Error(`Eksport stoppet, fordi PNG-filer ikke kan omdøbes sikkert:\n${renamePlan.errors.join('\n')}`);
-    }
-    const planBySource = new Map(renamePlan.plans.map((plan) => [plan.source, plan]));
+    const planBySource = new Map(renamePlan.map((plan) => [plan.source, plan]));
     const results = [];
     for (let index = 0; index < matches.length; index += 1) {
       const match = matches[index];
@@ -93,11 +90,17 @@ app.whenReady().then(() => {
       try {
         await runFfmpeg(match.song.path, match.image.path, output);
         const rename = planBySource.get(match.image.path);
+        let savedPreviousCover = null;
+        if (!isSameWindowsPath(rename.source, rename.target) && existsSync(rename.target)) {
+          savedPreviousCover = oldNameFor(rename.target);
+          await fs.rename(rename.target, savedPreviousCover);
+        }
         await fs.rename(rename.source, rename.target);
         results.push({
           song: match.song.name,
           cover: match.image.name,
           renamedCover: path.basename(rename.target),
+          savedPreviousCover: savedPreviousCover ? path.basename(savedPreviousCover) : null,
           output: path.basename(output),
           status: 'ok'
         });
